@@ -1,0 +1,23 @@
+@import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+
+*{
+	font-family: "Noto Sans TC", "微軟正黑體", Sans-serif;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+    background-size: 100% auto;
+	background-repeat: no-repeat;
+}
+
+html, body{
+	height: 100%;
+	margin: 0%;
+}
+
+.map{
+    background-image: url('NCTUmap2.jpg');
+    background-position: center center;
+    width: 600%;
+    height: 600%;
+    overflow: hidden;
+}

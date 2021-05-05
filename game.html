@@ -5,22 +5,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>game test</title>
+	<script type="text/javascript" src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
+	<link rel="stylesheet" href="css/default.css">
 </head>
 <body>
-	<div id="game"></div>
-	<script type="text/javascript" src="https://rawgithub.com/craftyjs/Crafty/release/dist/crafty-min.js"></script>
-	<script>
-		Crafty.init(500, 350, document.getElementById('game'));
-
-		Crafty.e('Floor, 2D, Canvas, Color')
-			.attr({x: 0, y: 250, w: 250, h: 10})
-			.color('green');
-
-		Crafty.e('2D, DOM, Color, Twoway, Gravity')
-			.attr({x: 0, y: 0, w: 100, h: 100})
-			.color('#F00')
-			.twoway(200)
-			.gravity('Floor');
-	</script>
+	<script src="js/game.js"></script>
 </body>
 </html>
