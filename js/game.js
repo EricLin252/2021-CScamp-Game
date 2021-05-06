@@ -9,7 +9,10 @@ Crafty.c("林冠宇", {
 		this.addComponent("Player")
 			.text("林冠宇")
 			.setHeadshot("img/headshot/林冠宇.jpg")
-			.setTeam(9);
+			.setTeam(9)
+			.setWeapon("img/weapon/basic_gun.png");
+
+		this.weapon.setBullet("img/weapon/basic_bullet.png");
 	}
 });
 

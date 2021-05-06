@@ -19,22 +19,25 @@ Crafty.c("BG", {
 			y: data.realY
 		};
 		var playerRadius = Crafty("Player").w/2;
-		Crafty("Player").weapon.fire(playerPos, mousePos, playerRadius);
+		var playerWeapon = Crafty("Player").weapon;
+		if(playerWeapon) playerWeapon.fire(playerPos, mousePos, playerRadius);
 	}
 });
 
+//bullet基本屬性設定
 Crafty.c("Bullet", {
+	//設定子彈大小，並且設定初始速度、存活時長
 	init: function(){
-		this.addComponent("2D, DOM, Color")
+		this.addComponent("2D, DOM")
 			.attr({w: 10, h: 15})
-			.color("gray")
 			.origin("center")
 			.bind("UpdateFrame", this.fly);
 
-		this.v = 300;
+		this.v = 500;
 		this.lifetime = 3;
 		this.timer = 0;
 	},
+	//每frame更新一次子彈位置，並決定子彈是否消滅
 	fly: function(data){
 		this.timer += data.dt / 1000;
 		if(this.timer > this.lifetime) this.destroy();
@@ -43,6 +46,15 @@ Crafty.c("Bullet", {
 			x: this.x + this.direction.x * this.v * data.dt/1000,
 			y: this.y + this.direction.y * this.v * data.dt/1000
 		});
+	},
+	//設定子彈圖片
+	setImg: function(url){
+		this.css({
+			backgroundImage: "url('" + url + "')",
+			backgroundSize: "100% 100%",
+			backgroundPosition: "center center"
+		});
+		return this;
 	}
 });
 
@@ -54,9 +66,8 @@ var weaponErr = {x: 2.5, y: 2, r: 5, b: 2};
 Crafty.c("Weapon", {
 	init: function(){
 		this.addComponent("2D, DOM, Color")
-			.attr({x: 0, y: 0, w: 30, h: 30})
-			.origin("center")
-			.color("red");
+			.attr({x: 0, y: 0, w: 50, h: 50})
+			.origin("center");
 	},
 	//由滑鼠點擊事件呼叫
 	fire: function(playerPos, mousePos, playerRadius){
@@ -78,6 +89,7 @@ Crafty.c("Weapon", {
 
 		//生成子彈
 		var bullet = Crafty.e("Bullet");
+		if(this.bulletUrl) bullet.setImg(this.bulletUrl);
 		var fireDiff = Vec.normalize().scale(this.h/2 + bullet.h/2 + weaponErr.b);
 		bullet.attr({
 			x: newCenter.x - bullet.w/2 + weaponErr.x + fireDiff.x,
@@ -93,6 +105,20 @@ Crafty.c("Weapon", {
 	//將武器左上角座標轉換為中央座標
 	topleft_to_center: function(topleft){
 		return {x: topleft.x + this.w/2, y: topleft.y + this.h/2};
+	},
+	//設定武器圖片
+	setImg: function(url){
+		this.css({
+			backgroundImage: "url('" + url + "')",
+			backgroundSize: "100% 100%",
+			backgroundPosition: "center center"
+		});
+		return this;
+	},
+	//設定武器所屬子彈圖片
+	setBullet: function(url){
+		this.bulletUrl = url;
+		return this;
 	}
 });
 
@@ -112,23 +138,18 @@ Crafty.c("Player", {
 				border: "solid 2px",
 				textShadow: "white 0 0 5px"
 			});
-
-		this.weapon = Crafty.e("Weapon");
-		var center = this.getCenter();
-		this.weapon.attr({
-			x: center.x - this.weapon.w/2 + weaponErr.x,
-			y: center.y + this.h/2 + weaponErr.y + weaponErr.r
-		});
 		
 		this.bind("Move", function(data){
 			var delta = {
 				x: this.x - data._x,
 				y: this.y - data._y
 			};
-			this.weapon.attr({
-				x: this.weapon.x + delta.x,
-				y: this.weapon.y + delta.y
-			});
+			if(this.weapon){
+				this.weapon.attr({
+					x: this.weapon.x + delta.x,
+					y: this.weapon.y + delta.y
+				});
+			}
 		});
 	},
 	//設定照片
@@ -181,6 +202,15 @@ Crafty.c("Player", {
 			boxShadow: "0 0 10px " + color
 		});
 		return this;
+	},
+	//設定武器
+	setWeapon: function(url){
+		this.weapon = Crafty.e("Weapon").setImg(url);
+		var center = this.getCenter();
+		this.weapon.attr({
+			x: center.x - this.weapon.w/2 + weaponErr.x,
+			y: center.y + this.h/2 + weaponErr.y + weaponErr.r
+		});
 	},
 	//獲得角色中央座標
 	getCenter: function(){
