@@ -54,29 +54,29 @@
 
 ## _component.js_
 ### BG
-> public this **.setImg (** String **url** , Number **w** , Number **h )**  
+> _public this **.setImg (** String **url** , Number **w** , Number **h )**_  
 > **url**：地圖圖片的相對路徑  
 > **w**：圖片像素寬度  
 > **h**：圖片像素高度  
 > ***
 > 設定地圖圖片，若 w 或 h 比原圖的長寬小，圖片會被裁切。  
-
-> void **.mapClick (** mouseEvent **data )**  
+***
+> _void **.mapClick (** mouseEvent **data )**_  
 > **data**：由 Click 事件傳送的滑鼠點擊事件資料  
 > ***  
 > 只可以由 BG.init 中的 Click 事件呼叫，負責呼叫 Weapon.fire
 
 ### Bullet
-> public Number **v** = 500  
+> _public Number **v** = 500_
 > ***  
 > 子彈速度
-
-> public Number **lifetime** = 3
+***
+> _public Number **lifetime** = 3_
 > ***
 > 子彈最多可以在場上存活多久(秒)
-
-> Number **timer** = 0
+***
+> _Number **timer** = 0_
 > ***
 > 記錄子彈目前已在場上存活多久(秒)
-
-> void **.fly (** frameEvent **data )**
+***
+> _void **.fly (** frameEvent **data )**_
