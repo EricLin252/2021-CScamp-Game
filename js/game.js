@@ -1,14 +1,14 @@
 //系統初始化，將場景長寬設為與螢幕相同
 Crafty.init(window.innerWidth, window.innerHeight);
 //加載地圖
-Crafty.e("BG").setImg("NCTUmap2.jpg", 6405, 5169);
+Crafty.e("BG").setImg("img/map/NCTUmap2.jpg", 6405, 5169);
 
 //讓小隊員自己設計自己的角色
 Crafty.c("林冠宇", {
 	init: function(){
 		this.addComponent("Player")
 			.text("林冠宇")
-			.setHeadshot("head.jpg")
+			.setHeadshot("img/headshot/林冠宇.jpg")
 			.setTeam(9);
 	}
 });
