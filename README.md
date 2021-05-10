@@ -6,20 +6,29 @@
 ## 檔案說明
 
 * _**game.html**_  
-	遊戲主頁，不需要編輯
+	遊戲主頁，不需要編輯。
+
+* _**landscape_generate.html**_  
+	可選擇地形圖檔，生成地形資料檔 _landscape.txt_ 。
 
 * _**js**_
 	* _**crafty-min.js**_  
-		crafty 函式庫，不用看，你也看不懂
+		crafty 函式庫，不用看，你也看不懂。
 
 	* _**game.js**_  
-		小隊員要學的部分，包含場景初始化，以及自製自己的角色
+		小隊員要學的部分，包含場景初始化，以及自製自己的角色。
 
 	* _**component.js**_  
-		所有遊戲中物件的定義，包含武器、子彈、玩家等基本設定
+		所有遊戲中物件的定義，包含武器、子彈、玩家等基本設定。
+
+	* _**tool.js**_  
+		一些簡單的小function。
 
 	* _**event.js**_  
-		暫時用不到，我多寫的
+		暫時用不到，我多寫的。
+
+	* _**landscape.js**_  
+		由 _landscape.html_ 生成的 txt 檔改副檔名而成，紀錄整個地圖的地形資訊。
 
 * _**css**_
 	* _**default.css**_  
@@ -108,24 +117,6 @@
 > 依照玩家點擊的位置與玩家角色的連線，算出武器該更新的位置，並且使武器面向點擊的位置。  
 > 同時，生成一個子彈物件在武器前，使用 bulletUrl 作為子彈的圖片，使子彈朝向武器的方向射出。
 ***
-> _public Object **center_to_topleft (** Object **center )**_  
-> **center**：武器中心點座標(px)  
-> **return**：轉換後的武器左上座標(px)
-> ***
-> **center** = **{** Number **x** , Number **y }**  
-> **return** = **{** Number **x** , Number **y }**
-> ***
-> 將武器的中央點座標轉換為左上點座標。
-***
-> _public Object **topleft_to_center (** Object **topleft )**_  
-> **topleft**：武器左上點座標(px)  
-> **return**：轉換後的武器中心點座標(px)
-> ***
-> **topleft** = **{** Number **x** , Number **y }**  
-> **return** = **{** Number **x** , Number **y }**
-> ***
-> 將武器的左上點座標轉換為中央點座標
-***
 > _public this **.setImg (** String **url )**_  
 > **url**：武器圖片檔的相對路徑
 > ***
@@ -161,13 +152,6 @@
 > **url**：武器圖片檔的相對路徑
 > ***
 > 為角色新增武器，並設定武器圖片。
-***
-> _public Object **.getCenter ()**_  
-> **return**：角色中心點座標(px)
-> ***
-> **return** = **{** Number **x** , Number **y }**
-> ***
-> 獲得玩家角色的中心點座標。
 
 ### weaponErr
 因player的DOM元素顯示存在些許誤差，需要微調武器的顯示位置。  
@@ -187,3 +171,38 @@
 > _public Number **b** = 2_
 > ***
 > 子彈生成與武器之間的預留空間(px)。
+
+## _tool.js_
+> _public Object **center\_to\_topleft (** Object **center** , Object **size )**_  
+> **center**：物體中心點座標(px)  
+> **size**：物體長寬(px)  
+> **return**：物體左上點座標(px)
+> ***
+> **center** = **{** Number **x** , Number **y }**  
+> **size** = **{** Number **w** , Number **h }**  
+> **return** = **{** Number **x** , Number **y }**
+> ***
+> 將一物體的中央點座標轉換為左上點座標。
+***
+> _public Object **topleft\_to\_center (** Object **topleft** , Object **size )**_  
+> **topleft**：物體左上點座標(px)  
+> **size**：物體長寬(px)  
+> **return**：物體中心點座標(px)
+> ***
+> **topleft** = **{** Number **x** , Number **y }**  
+> **size** = **{** Number **w** , Number **h }**  
+> **return** = **{** Number **x** , Number **y }**
+> ***
+> 將一物體的左上點座標轉換為中央點座標。
+***
+> _public String **get\_landscape (** Object **center )**_  
+> **center**：物體中心點座標(px)  
+> **return**：物體所在的地區的種類
+> ***
+> **center** = **{** Number **x** , Number **y }**
+> ***
+> 尋找物體所在區域為何，回傳值有四種：  
+> X：禁止進入區域(地圖外)  
+> A：普通可行走區域  
+> W：水域  
+> R：競技區
