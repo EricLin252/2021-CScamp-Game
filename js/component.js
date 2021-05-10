@@ -13,13 +13,11 @@ Crafty.c("BG", {
 	},
 	//滑鼠點擊事件發生時會運作
 	mapClick: function(data){
-		var playerPos = Crafty("Player").getCenter();
-		var mousePos = {
-			x: data.realX,
-			y: data.realY
-		};
-		var playerRadius = Crafty("Player").w/2;
-		var playerWeapon = Crafty("Player").weapon;
+		var player = Crafty("Player");
+		var playerPos = topleft_to_center({x: player.x, y: player.y}, {w: player.w, h: player.h});
+		var mousePos = {x: data.realX, y: data.realY};
+		var playerRadius = player.w/2;
+		var playerWeapon = player.weapon;
 		if(playerWeapon) playerWeapon.fire(playerPos, mousePos, playerRadius);
 	}
 });
@@ -65,7 +63,7 @@ var weaponErr = {x: 2.5, y: 2, r: 5, b: 2};
 //weapon基本屬性設定
 Crafty.c("Weapon", {
 	init: function(){
-		this.addComponent("2D, DOM, Color")
+		this.addComponent("2D, DOM")
 			.attr({x: 0, y: 0, w: 50, h: 50})
 			.origin("center");
 	},
@@ -79,7 +77,7 @@ Crafty.c("Weapon", {
 			x: playerPos.x * (distance-playerRadius)/distance + mousePos.x * playerRadius/distance,
 			y: playerPos.y * (distance-playerRadius)/distance + mousePos.y * playerRadius/distance
 		};
-		var newTopleft = this.center_to_topleft(newCenter);
+		var newTopleft = center_to_topleft(newCenter, {w: this.w, h: this.h});
 		var Rad = Vec.angleBetween(new Crafty.math.Vector2D(0, 1));
 		this.attr({
 			x: newTopleft.x + weaponErr.x,
@@ -97,14 +95,8 @@ Crafty.c("Weapon", {
 			rotation: this.rotation
 		});
 		bullet.direction = Vec.normalize();
-	},
-	//將武器中央座標轉換為左上角座標
-	center_to_topleft: function(center){
-		return {x: center.x - this.w/2, y: center.y - this.h/2};
-	},
-	//將武器左上角座標轉換為中央座標
-	topleft_to_center: function(topleft){
-		return {x: topleft.x + this.w/2, y: topleft.y + this.h/2};
+
+		return this;
 	},
 	//設定武器圖片
 	setImg: function(url){
@@ -127,7 +119,7 @@ Crafty.c("Player", {
 	//設定player起始位置、移動速度、以及基本樣式
 	init: function(){
 		this.addComponent("2D, DOM, Fourway, Text, Mouse")
-			.attr({w: 70, h: 70})
+			.attr({x: 2000, y: 2000, w: 70, h: 70})
 			.fourway(200)
 			.css({
 				backgroundColor: "rgba(255, 255, 255, 0.5)",
@@ -139,18 +131,9 @@ Crafty.c("Player", {
 				textShadow: "white 0 0 5px"
 			});
 		
-		this.bind("Move", function(data){
-			var delta = {
-				x: this.x - data._x,
-				y: this.y - data._y
-			};
-			if(this.weapon){
-				this.weapon.attr({
-					x: this.weapon.x + delta.x,
-					y: this.weapon.y + delta.y
-				});
-			}
-		});
+		this.bind("Move", this.whenMove);
+
+		this.validPos = {x: this.x, y: this.y};
 	},
 	//設定照片
 	setHeadshot: function(url){
@@ -206,14 +189,36 @@ Crafty.c("Player", {
 	//設定武器
 	setWeapon: function(url){
 		this.weapon = Crafty.e("Weapon").setImg(url);
-		var center = this.getCenter();
+		var center = topleft_to_center({x: this.x, y: this.y}, {w: this.w, h: this.h});
 		this.weapon.attr({
 			x: center.x - this.weapon.w/2 + weaponErr.x,
 			y: center.y + this.h/2 + weaponErr.y + weaponErr.r
 		});
 	},
-	//獲得角色中央座標
-	getCenter: function(){
-		return {x: this.x + this.w/2, y: this.y + this.h/2};
+	//每次角色更新座標位置時都會觸發
+	whenMove: function(data){
+		var _center = topleft_to_center({x: data._x, y: data._y}, {w: this.w, h: this.h});
+		var center = topleft_to_center({x: this.x, y: this.y}, {w: this.w, h: this.h});
+		var new_state = get_landscape(center);
+
+		if(new_state == "X"){
+			this.attr(this.validPos);
+		}
+		else{
+			var delta = {
+				x: this.x - this.validPos.x,
+				y: this.y - this.validPos.y
+			};
+
+			this.validPos.x = this.x;
+			this.validPos.y = this.y;
+
+			if(this.weapon){
+				this.weapon.attr({
+					x: this.weapon.x + delta.x,
+					y: this.weapon.y + delta.y
+				});
+			}
+		}
 	}
 });
