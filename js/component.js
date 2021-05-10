@@ -3,7 +3,7 @@ Crafty.c("BG", {
 	//初始化，並綁定滑鼠點擊事件
 	init: function(){
 		this.addComponent("Canvas, Mouse")
-			.bind("Click", this.mapClick);
+			.bind("Click", this._mapClick);
 	},
 	//設定地圖圖片以及長寬
 	setImg: function(url, w, h){
@@ -12,13 +12,13 @@ Crafty.c("BG", {
 		return this;
 	},
 	//滑鼠點擊事件發生時會運作
-	mapClick: function(data){
+	_mapClick: function(data){
 		var player = Crafty("Player");
 		var playerPos = topleft_to_center({x: player.x, y: player.y}, {w: player.w, h: player.h});
 		var mousePos = {x: data.realX, y: data.realY};
 		var playerRadius = player.w/2;
 		var playerWeapon = player.weapon;
-		if(playerWeapon) playerWeapon.fire(playerPos, mousePos, playerRadius);
+		if(playerWeapon) playerWeapon._fire(playerPos, mousePos, playerRadius);
 	}
 });
 
@@ -29,16 +29,17 @@ Crafty.c("Bullet", {
 		this.addComponent("2D, DOM")
 			.attr({w: 10, h: 15})
 			.origin("center")
-			.bind("UpdateFrame", this.fly);
+			.bind("UpdateFrame", this._fly);
 
 		this.v = 500;
 		this.lifetime = 3;
-		this.timer = 0;
+		this._timer = 0;
 	},
 	//每frame更新一次子彈位置，並決定子彈是否消滅
-	fly: function(data){
-		this.timer += data.dt / 1000;
-		if(this.timer > this.lifetime) this.destroy();
+	_fly: function(data){
+		this._timer += data.dt / 1000;
+		if(this._timer > this.lifetime) this.destroy();
+		if(get_landscape(topleft_to_center({x: this.x, y: this.y}, {w: this.w, h: this.h})) == "X") this.destroy();
 
 		this.attr({
 			x: this.x + this.direction.x * this.v * data.dt/1000,
@@ -68,7 +69,7 @@ Crafty.c("Weapon", {
 			.origin("center");
 	},
 	//由滑鼠點擊事件呼叫
-	fire: function(playerPos, mousePos, playerRadius){
+	_fire: function(playerPos, mousePos, playerRadius){
 		//更改武器的位置與朝向
 		playerRadius += this.h/2 + weaponErr.r;
 		var distance = Crafty.math.distance(playerPos.x, playerPos.y, mousePos.x, mousePos.y);
@@ -87,7 +88,7 @@ Crafty.c("Weapon", {
 
 		//生成子彈
 		var bullet = Crafty.e("Bullet");
-		if(this.bulletUrl) bullet.setImg(this.bulletUrl);
+		if(this._bulletUrl) bullet.setImg(this._bulletUrl);
 		var fireDiff = Vec.normalize().scale(this.h/2 + bullet.h/2 + weaponErr.b);
 		bullet.attr({
 			x: newCenter.x - bullet.w/2 + weaponErr.x + fireDiff.x,
@@ -109,7 +110,7 @@ Crafty.c("Weapon", {
 	},
 	//設定武器所屬子彈圖片
 	setBullet: function(url){
-		this.bulletUrl = url;
+		this._bulletUrl = url;
 		return this;
 	}
 });
@@ -131,7 +132,7 @@ Crafty.c("Player", {
 				textShadow: "white 0 0 5px"
 			});
 		
-		this.bind("Move", this.whenMove);
+		this.bind("Move", this._whenMove);
 
 		this.validPos = {x: this.x, y: this.y};
 	},
@@ -196,7 +197,7 @@ Crafty.c("Player", {
 		});
 	},
 	//每次角色更新座標位置時都會觸發
-	whenMove: function(data){
+	_whenMove: function(data){
 		var _center = topleft_to_center({x: data._x, y: data._y}, {w: this.w, h: this.h});
 		var center = topleft_to_center({x: this.x, y: this.y}, {w: this.w, h: this.h});
 		var new_state = get_landscape(center);
