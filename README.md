@@ -73,7 +73,7 @@
 > ***
 > 設定地圖圖片，若 w 或 h 比原圖的長寬小，圖片會被裁切。  
 ***
-> _void **.mapClick (** mouseEvent **data )**_  
+> _void **.\_mapClick (** mouseEvent **data )**_  
 > **data**：由 Click 事件傳送的滑鼠點擊事件資料
 > ***  
 > 只可以由 BG.init 中的 Click 事件呼叫，負責呼叫 Weapon.fire。
@@ -87,11 +87,11 @@
 > ***
 > 子彈最多可以在場上存活多久(秒)。
 ***
-> _Number **timer** = 0_
+> _Number **\_timer** = 0_
 > ***
 > 記錄子彈目前已在場上存活多久(秒)。
 ***
-> _void **.fly (** frameEvent **data )**_  
+> _void **.\_fly (** frameEvent **data )**_  
 > **data**：由 UpdateFrame 事件傳送的frame更新資料
 > ***
 > 只可由 Bullet.init 中的 UpdataFrame 事件呼叫，負責更新目前子彈的位置，以及更新 timer ，確認子彈是否需要消滅。
@@ -102,11 +102,11 @@
 > 設定子彈圖片，圖片會被子彈的 w 與 h 拉伸變形。
 
 ### Weapon
-> _public String **bulletUrl** = undefined_
+> _String **\_bulletUrl** = undefined_
 > ***
 > 記錄武器的子彈的圖片檔相對路徑，只有在呼叫過 Weapon.setBullet 後才會被設置，否則都是 undefined。
 ***
-> _public this **fire (** Object **playerPos** , Object **mousePos** , Number **playerRadius )**_  
+> _this **\_fire (** Object **playerPos** , Object **mousePos** , Number **playerRadius )**_  
 > **playerPos**：玩家角色中心位置座標(px)  
 > **mousePos**：滑鼠點擊在地圖上的實際座標(px)  
 > **playerRadius**：玩家角色半徑大小(px)
@@ -152,6 +152,13 @@
 > **url**：武器圖片檔的相對路徑
 > ***
 > 為角色新增武器，並設定武器圖片。
+***
+> _void **.\_whenMove (** moveEvent **data )**_  
+> **data**：移動更新所帶的資料
+> ***
+> **data** = **{** Number **\_x** , Number **\_y** , Number **\_w** , Number **\_h }**
+> ***
+> 由 Move 事件呼叫，更新武器的位置，並且確認目前所在區域
 
 ### weaponErr
 因player的DOM元素顯示存在些許誤差，需要微調武器的顯示位置。  
