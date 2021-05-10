@@ -6,9 +6,9 @@ function topleft_to_center(topleft, size){
     return {x: topleft.x + size.w/2, y: topleft.y + size.h/2};
 }
 
-function get_landscape(position){
-    var x = Math.round(position.x);
-    var y = Math.round(position.y);
+function get_landscape(center){
+    var x = Math.round(center.x);
+    var y = Math.round(center.y);
     var count = 0;
     for(var i = 0; i < landscape[y].length; i++){
         count += landscape[y][i][1];
